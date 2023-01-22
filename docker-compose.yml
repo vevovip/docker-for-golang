@@ -1,0 +1,22 @@
+version: "3.8"
+
+services:
+  go-back:
+    container_name: ${SERVICE_PREFIX}-go-back
+    build:
+      context: ./docker
+#      dockerfile: docker/Dockerfile
+      args:
+        - APP_PATH_HOST=$APP_PATH_HOST
+      target: livereload #available options - livereload, debug
+    security_opt:
+      - "seccomp:unconfined"
+    cap_add:
+      - SYS_PTRACE
+    ports:
+      - "${GO_PORT}:8080"
+      - "2345:2345"
+    volumes:
+      - ${APP_PATH_HOST}:${APP_DIR_TO_PATH}
+    extra_hosts:
+      - "host.docker.internal:172.17.0.1"

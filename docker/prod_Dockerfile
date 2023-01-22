@@ -1,0 +1,36 @@
+FROM golang:1.19-alpine3.17 as BUILD_STAGE
+
+ARG login
+ARG token
+
+WORKDIR /go/src/app
+COPY . .
+
+RUN apk add --no-cache git make && \
+    git config --global url."https://${login}:${token}@git.test.kz/".insteadOf "https://git.test.kz/" && \
+    make build
+
+FROM alpine:3.14
+
+ARG uname=www-data
+ARG gid=33
+ARG uid=33
+
+RUN apk add --no-cache ca-certificates && \
+    \
+# Add user www-data
+    deluser xfs && \
+    adduser -u ${uid} -D -S -G ${uname} ${uname}
+
+USER www-data
+
+WORKDIR /app
+
+COPY --from=BUILD_STAGE /go/src/app/build/main /usr/bin/payment-gateway
+COPY --from=BUILD_STAGE /go/src/app/migration ./migration
+COPY --from=BUILD_STAGE /go/src/app/storage ./storage
+COPY --from=BUILD_STAGE /go/src/app/lang ./lang
+
+EXPOSE 8080
+
+CMD ["payment-gateway", "serve"]

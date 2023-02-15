@@ -5,7 +5,7 @@ services:
     container_name: ${SERVICE_PREFIX}-go-back
     build:
       context: ./docker
-#      dockerfile: docker/Dockerfile
+      #      dockerfile: docker/Dockerfile
       args:
         - APP_PATH_HOST=$APP_PATH_HOST
       target: livereload #available options - livereload, debug
@@ -20,3 +20,58 @@ services:
       - ${APP_PATH_HOST}:${APP_DIR_TO_PATH}
     extra_hosts:
       - "host.docker.internal:172.17.0.1"
+    networks:
+      - go-back
+
+#  redis:
+#    container_name: ${SERVICE_PREFIX}-redis
+#    image: redis:5.0
+#    ports:
+#      - "6379:6379"
+#    volumes:
+#      - ./redis:/var/lib/redis
+#    networks:
+#      - go-back
+
+#  postgres:
+#    container_name: ${SERVICE_PREFIX}-postgres
+#    image: postgres:13.3
+#    ports:
+#      - "5432:5432"
+#    networks:
+#      - go-back
+#    volumes:
+#      - ${DB_PATH_HOST}/postgres:/data/postgres
+#    tty: true
+#    environment:
+#      POSTGRES_PASSWORD: 123456
+#      POSTGRES_USER: postgres
+#      PGDATA: /data/postgres
+
+#  mongodb:
+#    image: mongo:latest
+#    container_name: mongodb
+#    environment:
+#      MONGO_INITDB_ROOT_USERNAME: root
+#      MONGO_INITDB_ROOT_PASSWORD: 123456
+#    ports:
+#      - 27017:27017
+#    volumes:
+#      - ${DB_PATH_HOST}/mongo:/data/db
+
+#  rabbitmq:
+#    container_name: ${SERVICE_PREFIX}-rabbitmq
+#    image: rabbitmq:3-management
+#    ports:
+#      - "5672:5672"
+#      - "15672:15672"
+#    volumes:
+#      - ./rabbitmq/data:/var/lib/rabbitmq
+#    networks:
+#      - go-back
+
+networks:
+  go-back:
+    driver: bridge
+    name: dockernet-local
+

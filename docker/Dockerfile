@@ -1,6 +1,8 @@
-FROM golang:1.19-alpine3.17 as base
-
 ARG APP_PATH_HOST
+ARG GO_VERSION
+ARG ALPINE_VERSION
+
+FROM golang:${GO_VERSION}-alpine${ALPINE_VERSION} as base
 
 WORKDIR /go/src/app
 

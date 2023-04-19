@@ -17,7 +17,7 @@ services:
       - SYS_PTRACE
     ports:
       - "${GO_PORT}:8080"
-      - "2345:2345"
+      - "${DEBUGGER_PORT}:2345"
     volumes:
       - ${APP_PATH_HOST}:${APP_DIR_TO_PATH}
     extra_hosts:
